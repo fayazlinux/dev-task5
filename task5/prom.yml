@@ -1,0 +1,43 @@
+apiVersion: apps/v1 
+kind: Deployment
+metadata:
+  name: prom
+  labels:
+    app: prom
+spec:
+  selector:
+    matchLabels:
+      app: prom
+      env: prod
+  strategy:
+    type: Recreate
+  template:
+    metadata:
+      labels:
+        app: prom
+        env: prod
+    spec: 
+      containers:
+      - image: prom/prometheus
+        name: prom
+        args:
+        - '--config.file=/prometheus.yml'
+        - '--storage.tsdb.path=prometheus_data/'
+        ports:
+        - containerPort: 9090
+          name: prom
+        volumeMounts:
+        - name: prometheus-persistent-storage
+          mountPath: prometheus_data/
+        - name: prometheus-configfile
+          mountPath: /prometheus.yml
+          subPath: prometheus.yml
+      volumes:
+      - name: prometheus-persistent-storage
+        persistentVolumeClaim:
+          claimName: prom-pv-claim
+      - name: prometheus-configfile
+        configMap:
+          name: prom-configfile
+          defaultMode: 0744
+

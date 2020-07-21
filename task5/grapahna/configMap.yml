@@ -1,0 +1,14 @@
+kind: ConfigMap
+apiVersion: v1
+metadata:
+  name: grafana-config
+data:
+  datasource.yaml: |
+        apiVersion: 1
+        datasources:
+        - name: Prometheus
+          type: prometheus
+          access: server
+          url: http://202.63.219.39:30032
+          version: 1
+          editable: true
